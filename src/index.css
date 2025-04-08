@@ -1,1 +1,17 @@
+@import "tailwindcss";
+@import "./fonts/font.css";
 
+body {
+  font-family: "Montserrat", sans-serif;
+  background-color: var(--secondary);
+  color: var(--primary);
+}
+
+:root {
+  --primary: #ffffff;
+  --secondary: #0d0d0d;
+  --tertiary: #1e1e1e;
+  --accent: #a61717;
+  --muted: #747474;
+  --header-bg: #121212;
+}
