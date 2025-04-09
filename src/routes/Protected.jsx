@@ -14,6 +14,6 @@ const Protected = ({ children }) => {
 
 export default Protected;
 
-Protected.propTypes = {
-  children: PropTypes.node.isRequired,
-};
+// Protected.propTypes = {
+//   children: PropTypes.node.isRequired,
+// };
