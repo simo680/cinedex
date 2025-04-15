@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import MovieRow from "../../components/MovieRow";
-import { fetchCategoryMovies } from "../../services/api"; // Импортируем функцию из api.js
+import { Link } from "react-router-dom";
+import HorizontalScrollList from "../../components/HorizontalScrollList";
+import { fetchCategoryMovies } from "../../services/api";
 
 const categories = [
   { title: "Популярное", type: "popular" },
@@ -36,15 +37,26 @@ const HomePage = () => {
   }
 
   return (
-    <div>
-      {categories.map((cat) => (
-        <MovieRow
-          key={cat.type}
-          title={cat.title}
-          movies={data[cat.type] || []}
-        />
-      ))}
-    </div>
+    <>
+      <div>
+        {categories.map((cat) => (
+          <HorizontalScrollList
+            key={cat.type}
+            title={cat.title}
+            items={data[cat.type] || []}
+            renderItem={(movie) => (
+              <Link to={`/movies/${movie.id}`} key={movie.id}>
+                <img
+                  src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
+                  alt={movie.title}
+                  className="w-[150px] rounded-lg transition-transform hover:scale-105"
+                />
+              </Link>
+            )}
+          />
+        ))}
+      </div>
+    </>
   );
 };
 

@@ -11,7 +11,7 @@ import ArticlePage from "./pages/ArticlePage/index.jsx";
 import ArticleDetailPage from "./pages/ArticleDetailPage/index.jsx";
 import ProfilePage from "./pages/ProfilePage/index.jsx";
 import WatchlistPage from "./pages/WatchlistPage/index.jsx";
-import MovieDetailPage from "./pages/MovieDetailPage/index.jsx";
+import ContentDetailPage from "./pages/ContentDetailPage/index.jsx";
 import ErrorPage from "./pages/ErrorPage/index.jsx";
 
 const router = createBrowserRouter([
@@ -29,11 +29,15 @@ const router = createBrowserRouter([
       },
       {
         path: "/movies/:id",
-        element: <MovieDetailPage />,
+        element: <ContentDetailPage type="movie" />,
       },
       {
         path: "/series",
         element: <SeriesPage />,
+      },
+      {
+        path: "/series/:id",
+        element: <ContentDetailPage type="tv" />,
       },
       {
         path: "/search",

@@ -12,7 +12,7 @@ const ArticleDetailPage = () => {
 
   return (
     <>
-      <div className="relative min-h-screen">
+      <div>
         <button
           onClick={() => navigate(-1)}
           className="mt-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-red-500 text-red-500 transition hover:bg-red-500 hover:text-black"
@@ -34,12 +34,12 @@ const ArticleDetailPage = () => {
         </button>
         <div className="mx-auto flex max-w-7xl items-center justify-center gap-4 px-4 pt-8 sm:px-6 md:px-8 lg:px-12">
           <div className="max-w-3xl">
-          <div className="mb-6 flex flex-col gap-4 text-sm sm:flex-row sm:items-center sm:gap-6">
+            <div className="mb-6 flex flex-col gap-4 text-sm sm:flex-row sm:items-center sm:gap-6">
               <div className="flex items-center gap-2">
                 <img
                   src={article.authorLogo || "автор"}
                   alt=""
-                  className="h-10 w-10 object-cover rounded-full"
+                  className="h-10 w-10 rounded-full object-cover"
                 />
                 <p>{article.authorNickname}</p>
               </div>
