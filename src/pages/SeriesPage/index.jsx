@@ -4,11 +4,7 @@ import DiscoverPage from "../../components/Discover";
 const SeriesPage = () => {
   return (
     <>
-      <DiscoverPage
-        fetchData={fetchDiscoverTvSeries}
-        pageTitle="Сериалы"
-        routePrefix="series"
-      />
+      <DiscoverPage fetchData={fetchDiscoverTvSeries} routePrefix="series" />
     </>
   );
 };

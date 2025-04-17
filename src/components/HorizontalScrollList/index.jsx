@@ -2,7 +2,12 @@ import { useRef } from "react";
 import LeftArrow from "../../assets/left-button.svg?react";
 import RightArrow from "../../assets/right-button.svg?react";
 
-const HorizontalScrollList = ({ title, items, renderItem, itemWidth = "150px" }) => {
+const HorizontalScrollList = ({
+  title,
+  items,
+  renderItem,
+  itemWidth = "50px",
+}) => {
   const scrollRef = useRef();
 
   const scroll = (direction) => {
@@ -19,7 +24,7 @@ const HorizontalScrollList = ({ title, items, renderItem, itemWidth = "150px" })
   };
 
   return (
-    <div className="mb-8">
+    <div className="my-4">
       {title && (
         <div className="mb-6 flex items-center">
           <h2 className="flex-grow text-3xl font-bold">{title}</h2>

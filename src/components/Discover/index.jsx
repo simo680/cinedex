@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 
-const Discover = ({ fetchData, pageTitle, routePrefix }) => {
+const Discover = ({ fetchData, routePrefix }) => {
   const [items, setItems] = useState([]);
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState("popularity.desc");
@@ -61,12 +61,11 @@ const Discover = ({ fetchData, pageTitle, routePrefix }) => {
 
   return (
     <div>
-      <div className="mb-6 flex items-center gap-4">
-        <h2 className="text-xl font-semibold">{pageTitle}</h2>
+      <div className="mb-6 flex flex-col items-start gap-4">
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
-          className="rounded border px-2 py-1 text-sm"
+          className="rounded text-[28px]"
         >
           <option value="popularity.desc">Популярные</option>
           <option value="vote_average.desc&vote_count.gte=1000">

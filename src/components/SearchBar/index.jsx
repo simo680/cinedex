@@ -21,12 +21,19 @@ const SearchBar = () => {
 
   return (
     <>
-      <form className="flex items-center gap-5" onSubmit={handleSearchSubmit}>
-        <button className="" type="submit">
-          <img src={searchIcon} alt="Лупа поиска" />
+      <form
+        className="flex w-full items-center justify-center gap-4 sm:w-[80%] sm:gap-6 md:w-32 md:gap-7 lg:w-auto"
+        onSubmit={handleSearchSubmit}
+      >
+        <button type="submit" aria-label="Поиск">
+          <img
+            src={searchIcon}
+            alt="Иконка поиска"
+            className="sm:h-6 sm:w-6 md:h-7 md:w-7"
+          />
         </button>
         <input
-          className="focus:border-accent w-full border-b-0 hover:border-b-2 bg-transparent p-2 text-white placeholder-gray-400 outline-none md:w-64"
+          className="focus:border-accent w-full border-b-2 border-transparent bg-transparent px-2 py-1 text-sm text-white placeholder-gray-400 transition-all duration-200 outline-none hover:border-white sm:text-base md:text-lg"
           type="text"
           value={query}
           onChange={handleSearchChange}

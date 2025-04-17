@@ -14,4 +14,6 @@ body {
   --accent: #a61717;
   --muted: #747474;
   --header-bg: #121212;
+  --mobile-size: 576px;
+  --tablet-size: 1024px;
 }

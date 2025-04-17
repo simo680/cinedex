@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import SearchBar from "../SearchBar";
 import Logo from "../../assets/square.svg?react";
+import CloseIcon from "../../assets/close.svg?react";
 import clsx from "clsx";
 
 const Header = () => {
@@ -16,24 +17,29 @@ const Header = () => {
     setMenuOpen(false);
   };
 
+  const user = null;
+  const handleLoginClick = () => console.log("Открыть модалку");
+
   const isActive = (path) => location.pathname === path;
 
   return (
     <>
-      <header className="flex items-center justify-between bg-[var(--header-bg)] p-[20px] text-[12px] lg:text-[18px]">
+      <header className="flex w-full items-center justify-between bg-[var(--header-bg)] p-[20px] text-center sm:text-[12px] md:text-[14px] lg:text-[18px]">
         <div className="flex items-center">
           <Link to="/" className="flex items-center gap-4">
-            <Logo />
-            <h1 className="text-xl">Cinedex</h1>
+            <Logo className="h-[32px] w-[32px] sm:h-[36px] sm:w-[36px] md:h-[40px] md:w-[40px] lg:h-[43px] lg:w-[44px]" />
+            <h1 className="font-[Fira_Code] sm:text-[14px] md:text-[18px] lg:text-[21px]">
+              Cinedex
+            </h1>
           </Link>
         </div>
 
-        <div className="hidden md:block">
+        <div className="flex w-full max-w-[500px] flex-1 items-center justify-center px-4 sm:px-6 md:px-8 lg:px-10">
           <SearchBar />
         </div>
 
         {/* Основное меню для больших экранов */}
-        <ul className="hidden space-x-6 md:flex">
+        <ul className="align-center hidden items-center justify-center space-x-6 md:flex">
           <li>
             <Link
               to="/movies"
@@ -78,16 +84,28 @@ const Header = () => {
               Статьи
             </Link>
           </li>
+
           <li>
-            <Link
-              to="/profile"
-              className={clsx("hover:text-gray-300", {
-                "font-bold": isActive("/profile"),
-              })}
-              onClick={handleLinkClick}
-            >
-              Профиль
-            </Link>
+            {user ? (
+              <Link
+                to="/profile"
+                className="flex items-center gap-2 hover:text-gray-300"
+                onClick={handleLinkClick}
+              >
+                <img
+                  src={user.avatar || "../default-avatar.png"}
+                  alt="Аватар"
+                  className="h-14 w-14 rounded-full object-cover"
+                />
+              </Link>
+            ) : (
+              <span
+                onClick={handleLoginClick}
+                className="cursor-pointer hover:text-gray-300"
+              >
+                Войти
+              </span>
+            )}
           </li>
         </ul>
 
@@ -95,7 +113,11 @@ const Header = () => {
         <div className="md:hidden">
           <button
             onClick={toggleMenu}
-            className={clsx("text-white", { "font-bold": menuOpen })} // Кнопка тоже может быть жирной
+            className={clsx(
+              "text-white",
+              { "font-bold": menuOpen },
+              "cursor-pointer",
+            )}
           >
             Меню
           </button>
@@ -105,7 +127,7 @@ const Header = () => {
       {/* Мобильное меню */}
       <div
         className={clsx(
-          "bg-opacity-50 fixed inset-0 z-10 bg-[var(--secondary)] md:hidden",
+          "bg-opacity-50 fixed inset-0 z-1 bg-[var(--secondary)] md:hidden",
           { block: menuOpen, hidden: !menuOpen },
         )}
       >
@@ -169,9 +191,9 @@ const Header = () => {
           </ul>
           <button
             onClick={toggleMenu}
-            className="absolute top-4 right-4 text-white"
+            className="absolute top-4 right-4 cursor-pointer"
           >
-            
+            <CloseIcon />
           </button>
         </div>
       </div>

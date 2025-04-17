@@ -49,7 +49,7 @@ const HomePage = () => {
                 <img
                   src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
                   alt={movie.title}
-                  className="w-[150px] rounded-lg transition-transform hover:scale-105"
+                  className="w-[150px] transition-transform hover:scale-105"
                 />
               </Link>
             )}

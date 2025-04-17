@@ -32,74 +32,78 @@ function ContentDetailPage({ type }) {
   return (
     <>
       <div>
-        <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-4">
+        <div className="flex flex-col gap-8 md:flex-col lg:flex-row lg:items-stretch">
           {/* Постер */}
-          <div className="md:col-span-1">
+          <div className="w-full lg:w-auto">
             <img
               src={`https://image.tmdb.org/t/p/w500${data.poster_path}`}
               alt={data.title || data.name}
+              className="mx-auto h-auto w-full max-w-[300px] rounded lg:mx-0"
             />
           </div>
 
-          {/* Основная информация */}
-          <div className="space-y-4 md:col-span-2">
-            <h1 className="text-5xl font-bold">{data.title || data.name}</h1>
-            <ul className="flex gap-16 text-[18px]">
-              <li> {data.release_date || data.first_air_date} </li>
-              <li>{data.runtime || data.episode_run_time?.[0]} мин</li>
-              <li> {data.adult ? "18+" : "0+"}</li>
-            </ul>
+          {/* Центральный блок */}
+          <div className="flex h-full flex-1 flex-col justify-between space-y-4">
+            <div>
+              <h1 className="text-3xl font-bold sm:text-4xl md:text-5xl">
+                {data.title || data.name}
+              </h1>
+              <ul className="mt-2 flex flex-wrap gap-4 text-[14px] sm:gap-6 sm:text-[16px] md:gap-8 md:text-[18px]">
+                <li>{data.release_date || data.first_air_date}</li>
+                <li>{data.runtime || data.episode_run_time?.[0]} мин</li>
+                <li>{data.adult ? "18+" : "0+"}</li>
+              </ul>
 
-            {/* Жанры */}
-            <div className="flex flex-wrap gap-2">
-              {data.genres?.map((genre) => (
-                <span
-                  key={genre.id}
-                  className="bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700"
-                >
-                  {genre.name}
-                </span>
-              ))}
+              {/* Жанры */}
+              <div className="mt-4 flex flex-wrap gap-2">
+                {data.genres?.map((genre) => (
+                  <span
+                    key={genre.id}
+                    className="rounded bg-[var(--tertiary)] px-3 py-1 text-xs sm:text-sm"
+                  >
+                    {genre.name}
+                  </span>
+                ))}
+              </div>
+
+              {/* Описание */}
+              <div className="mt-4 text-sm sm:text-base">
+                <p className="mt-2">{data.overview}</p>
+              </div>
             </div>
 
-            {/* Описание */}
-            <div className="mt-4">
-              <p className="mt-2">{data.overview}</p>
-            </div>
-
-            {/* Кнопки */}
-            <div className="mt-2 flex gap-2">
-              <button className="cursor-pointer bg-yellow-500 px-2 py-1 hover:bg-yellow-600">
+            {/* Кнопки — снизу блока */}
+            <div className="mt-4 flex flex-wrap gap-2">
+              <button className="cursor-pointer bg-yellow-500 px-2 py-1 text-sm hover:bg-yellow-600 sm:text-base">
                 <ClockIcon />
               </button>
-              <button className="cursor-pointer bg-green-600 px-2 py-1 hover:bg-green-700">
+              <button className="cursor-pointer bg-green-600 px-2 py-1 text-sm hover:bg-green-700 sm:text-base">
                 <SuccessIcon />
               </button>
-              <button className="cursor-pointer bg-blue-600 px-2 py-1 hover:bg-blue-700">
+              <button className="cursor-pointer bg-blue-600 px-2 py-1 text-sm hover:bg-blue-700 sm:text-base">
                 <PauseIcon />
               </button>
-              <button className="cursor-pointer bg-[var(--tertiary)] p-4">
+              <button className="cursor-pointer bg-[var(--tertiary)] p-3 text-sm sm:p-4 sm:text-base">
                 Поставить оценку
               </button>
-              {/* <button className="">Поддержать донатом</button> */}
             </div>
           </div>
 
           {/* Оценки */}
-          <div className="flex flex-col gap-4 md:col-span-1">
-            <div className="rounded-xl p-4 text-center shadow">
-              <h3 className="text-lg">Оценка пользователей</h3>
-              <p className="text-3xl font-bold">
+          <div className="flex max-w-full flex-row justify-between gap-2 lg:max-w-[148px] lg:flex-col lg:justify-start">
+            <div className="w-full bg-[var(--tertiary)] px-6 py-3 text-center text-sm sm:text-base">
+              <p className="text-[18px] sm:text-[20px] md:text-[23px]">
                 {data.vote_average.toFixed(1)} / 10
               </p>
             </div>
-            <div className="rounded-xl p-4 text-center shadow">
-              <h3 className="text-lg">Моя оценка</h3>
-              <p className="text-3xl font-bold">— / 10</p>
-              {/* Здесь можно будет внедрить позже пользовательскую оценку */}
+            <div className="w-full bg-[var(--accent)] px-6 py-3 text-center text-sm sm:text-base">
+              <p className="text-[18px] sm:text-[20px] md:text-[23px]">
+                — / 10
+              </p>
             </div>
           </div>
         </div>
+
         {/* Фото */}
         <HorizontalScrollList
           title="Фотографии"
@@ -109,7 +113,7 @@ function ContentDetailPage({ type }) {
             <img
               src={`https://image.tmdb.org/t/p/w500${image.file_path}`}
               alt={`moment-${index}`}
-              className="w-full rounded shadow"
+              className="w-full shadow"
             />
           )}
         />
@@ -118,11 +122,11 @@ function ContentDetailPage({ type }) {
         <HorizontalScrollList
           title="Актеры"
           items={credits}
-          itemWidth="150px"
           renderItem={(actor) => (
-            <div className="overflow-hidden rounded shadow">
+            <div className="overflow-hidden shadow">
               {actor.profile_path && (
                 <img
+                  className="max-w-[300px] shadow"
                   src={`https://image.tmdb.org/t/p/w500${actor.profile_path}`}
                   alt={actor.name}
                 />
