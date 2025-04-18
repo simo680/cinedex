@@ -4,10 +4,15 @@ import SearchBar from "../SearchBar";
 import Logo from "../../assets/square.svg?react";
 import CloseIcon from "../../assets/close.svg?react";
 import clsx from "clsx";
+import AuthModal from "../AuthModal";
 
 const Header = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+
+  const isActive = (path) => location.pathname === path;
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -17,10 +22,10 @@ const Header = () => {
     setMenuOpen(false);
   };
 
-  const user = null;
-  const handleLoginClick = () => console.log("Открыть модалку");
+  const handleLoginClick = () => setIsAuthOpen(true);
+  const handleCloseAuthModal = () => setIsAuthOpen(false);
 
-  const isActive = (path) => location.pathname === path;
+  const user = null;
 
   return (
     <>
@@ -197,6 +202,8 @@ const Header = () => {
           </button>
         </div>
       </div>
+
+      <AuthModal isOpen={isAuthOpen} onClose={handleCloseAuthModal} />
     </>
   );
 };
