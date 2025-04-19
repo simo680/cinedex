@@ -13,6 +13,7 @@ import ProfilePage from "./pages/ProfilePage/index.jsx";
 import WatchlistPage from "./pages/WatchlistPage/index.jsx";
 import ContentDetailPage from "./pages/ContentDetailPage/index.jsx";
 import ErrorPage from "./pages/ErrorPage/index.jsx";
+import CreateMoviePage from "./pages/CreateMoviePage/index.jsx";
 
 const router = createBrowserRouter([
   {
@@ -58,6 +59,10 @@ const router = createBrowserRouter([
       {
         path: "/watchlist",
         element: <WatchlistPage />,
+      },
+      {
+        path: "/add-film",
+        element: <CreateMoviePage />,
       },
       {
         path: "*",

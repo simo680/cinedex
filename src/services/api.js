@@ -125,14 +125,22 @@ export const fetchDiscoverTvSeries = async (sortBy, page = 1) => {
 };
 
 // SEARCH
-export const searchData = async (query) => {
+export const searchByTitle = async (query) => {
   try {
-    const res = await fetch(
-      `${baseUrl}/search/multi?api_key=${apiKey}&query=${query}`,
-    );
+    const url = `https://api.themoviedb.org/3/search/multi?query=${encodeURIComponent(query)}&page=1`; // Правильный URL
+    const options = {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+    };
+
+    const res = await fetch(url, options);
     const data = await res.json();
-    return data;
+    return data.results || [];
   } catch (error) {
     console.error("Error searching data:", error);
+    return [];
   }
 };

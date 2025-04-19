@@ -4,8 +4,6 @@ import searchIcon from "../../assets/search.svg";
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState([]);
 
   const navigate = useNavigate();
   const handleSearchChange = (event) => {

@@ -2,15 +2,21 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchDetails, fetchCredits, fetchImages } from "../../services/api";
 import HorizontalScrollList from "../../components/HorizontalScrollList";
+import DonateModal from "../../components/DonateModal";
 import ClockIcon from "../../assets/clock.svg?react";
 import PauseIcon from "../../assets/pause.svg?react";
 import SuccessIcon from "../../assets/success.svg?react";
+import RatingModal from "../../components/RatingModal";
 
 function ContentDetailPage({ type }) {
   const { id } = useParams();
   const [data, setData] = useState(null);
   const [credits, setCredits] = useState([]);
   const [images, setImages] = useState([]);
+  const [isDonateOpen, setIsDonateOpen] = useState(false);
+
+  const [userRating, setUserRating] = useState(null);
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -73,19 +79,35 @@ function ContentDetailPage({ type }) {
             </div>
 
             {/* Кнопки — снизу блока */}
-            <div className="mt-4 flex flex-wrap gap-2">
-              <button className="cursor-pointer bg-yellow-500 px-2 py-1 text-sm hover:bg-yellow-600 sm:text-base">
-                <ClockIcon />
-              </button>
-              <button className="cursor-pointer bg-green-600 px-2 py-1 text-sm hover:bg-green-700 sm:text-base">
-                <SuccessIcon />
-              </button>
-              <button className="cursor-pointer bg-blue-600 px-2 py-1 text-sm hover:bg-blue-700 sm:text-base">
-                <PauseIcon />
-              </button>
-              <button className="cursor-pointer bg-[var(--tertiary)] p-3 text-sm sm:p-4 sm:text-base">
-                Поставить оценку
-              </button>
+            <div className="mt-4 flex flex-col gap-4 sm:flex-row">
+              {/* Колонка 1 — кнопки статуса */}
+              <div className="flex justify-center gap-2 sm:justify-start">
+                <button className="cursor-pointer bg-yellow-500 px-2 py-1 text-sm hover:bg-yellow-600 sm:text-base">
+                  <ClockIcon />
+                </button>
+                <button className="cursor-pointer bg-green-600 px-2 py-1 text-sm hover:bg-green-700 sm:text-base">
+                  <SuccessIcon />
+                </button>
+                <button className="cursor-pointer bg-blue-600 px-2 py-1 text-sm hover:bg-blue-700 sm:text-base">
+                  <PauseIcon />
+                </button>
+              </div>
+
+              {/* Колонка 2 — оценка и донат */}
+              <div className="flex justify-center items-center gap-2 sm:flex-row sm:items-center sm:justify-center sm:gap-4">
+                <button
+                  className="cursor-pointer bg-[var(--tertiary)] p-3 text-sm sm:p-4 sm:text-base"
+                  onClick={() => setIsRatingModalOpen(true)}
+                >
+                  Поставить оценку
+                </button>
+                <button
+                  className="cursor-pointer bg-[var(--tertiary)] p-3 text-sm sm:p-4 sm:text-base"
+                  onClick={() => setIsDonateOpen(true)}
+                >
+                  Поддержать донатом
+                </button>
+              </div>
             </div>
           </div>
 
@@ -98,7 +120,7 @@ function ContentDetailPage({ type }) {
             </div>
             <div className="w-full bg-[var(--accent)] px-6 py-3 text-center text-sm sm:text-base">
               <p className="text-[18px] sm:text-[20px] md:text-[23px]">
-                — / 10
+                {userRating ? `${userRating} / 10` : "— / 10"}
               </p>
             </div>
           </div>
@@ -126,7 +148,7 @@ function ContentDetailPage({ type }) {
             <div className="overflow-hidden shadow">
               {actor.profile_path && (
                 <img
-                  className="max-w-[300px] shadow"
+                  className="max-w-[200px] shadow"
                   src={`https://image.tmdb.org/t/p/w500${actor.profile_path}`}
                   alt={actor.name}
                 />
@@ -135,6 +157,16 @@ function ContentDetailPage({ type }) {
           )}
         />
       </div>
+      <RatingModal
+        isOpen={isRatingModalOpen}
+        onClose={() => setIsRatingModalOpen(false)}
+        initialRating={userRating}
+        onSubmit={(rating) => setUserRating(rating)}
+      />
+      <DonateModal
+        isOpen={isDonateOpen}
+        onClose={() => setIsDonateOpen(false)}
+      />
     </>
   );
 }

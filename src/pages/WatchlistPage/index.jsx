@@ -1,7 +1,9 @@
+import HorizontalScrollList from "../../components/HorizontalScrollList";
+
 const WatchlistPage = () => {
   return (
     <>
-      <h1>WatchlistPage</h1>
+     
     </>
   );
 };
