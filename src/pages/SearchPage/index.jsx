@@ -56,12 +56,10 @@ const SearchPage = () => {
                   <img
                     src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
                     alt={title}
-                    className="h-auto w-full rounded shadow"
+                    className="h-[412px] w-full shadow"
                   />
                 ) : (
-                  <div className="bg-gray-300 py-4 text-center">
-                    Нет постера
-                  </div>
+                  <div className="text-center">Нет постера</div>
                 )}
               </Link>
             );
