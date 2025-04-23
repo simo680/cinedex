@@ -4,6 +4,7 @@ import clsx from "clsx";
 import Modal from "../Modal";
 import OpenEyeIcon from "../../assets/open-eye.svg?react";
 import CloseEyeIcon from "../../assets/close-eye.svg?react";
+import supabase from "../../services/supabase/supabase";
 
 const AuthModal = ({ isOpen, onClose }) => {
   const {
@@ -15,9 +16,46 @@ const AuthModal = ({ isOpen, onClose }) => {
   const [isRegister, setIsRegister] = useState(false);
   const [visible, setVisible] = useState(true);
 
-  const onSubmit = (data) => {
-    console.log(isRegister ? "Регистрация:" : "Вход:", data);
-    // Здесь можно подключить Supabase авторизацию/регистрацию
+  const onSubmit = async (data) => {
+    try {
+      if (isRegister) {
+        const { data: signUpData, error: signUpError } =
+          await supabase.auth.signUp({
+            email: data.email,
+            password: data.password,
+          });
+
+        if (signUpError) throw signUpError;
+
+        const defaultAvatarUrl = `${window.location.origin}/default-avatar.png`;
+
+        const { error: profileError } = await supabase.from("profiles").insert([
+          {
+            id: signUpData.user.id,
+            username: data.username,
+            avatar_url: defaultAvatarUrl,
+          },
+        ]);
+
+        if (profileError) throw profileError;
+
+        alert("Регистрация прошла успешно! Проверьте почту для подтверждения.");
+      } else {
+        const { data: signInData, error: signInError } =
+          await supabase.auth.signInWithPassword({
+            email: data.email,
+            password: data.password,
+          });
+
+        if (signInError) throw signInError;
+
+        alert("Вход выполнен успешно");
+        onClose();
+      }
+    } catch (error) {
+      alert("Ошибка: " + error.message);
+      console.error(error);
+    }
   };
 
   return (

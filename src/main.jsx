@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
 import App from "./app/App.jsx";
+import ProtectedRoute from "./routes/ProtectedRoute.jsx";
 import HomePage from "./pages/HomePage/index.jsx";
 import MoviesPage from "./pages/MoviesPage/index.jsx";
 import SeriesPage from "./pages/SeriesPage/index.jsx";
@@ -14,6 +15,7 @@ import WatchlistPage from "./pages/WatchlistPage/index.jsx";
 import ContentDetailPage from "./pages/ContentDetailPage/index.jsx";
 import ErrorPage from "./pages/ErrorPage/index.jsx";
 import CreateMoviePage from "./pages/CreateMoviePage/index.jsx";
+import AuthProvider from "./context/authProvider.jsx";
 
 const router = createBrowserRouter([
   {
@@ -54,15 +56,28 @@ const router = createBrowserRouter([
       },
       {
         path: "/profile",
-        element: <ProfilePage />,
+        element: (
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/watchlist",
-        element: <WatchlistPage />,
+
+        element: (
+          <ProtectedRoute>
+            <WatchlistPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/add-film",
-        element: <CreateMoviePage />,
+        element: (
+          <ProtectedRoute>
+            <CreateMoviePage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "*",
@@ -74,6 +89,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </StrictMode>,
 );
