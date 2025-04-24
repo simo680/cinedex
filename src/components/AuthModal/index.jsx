@@ -27,19 +27,16 @@ const AuthModal = ({ isOpen, onClose }) => {
 
         if (signUpError) throw signUpError;
 
-        const defaultAvatarUrl = `${window.location.origin}/default-avatar.png`;
-
         const { error: profileError } = await supabase.from("profiles").insert([
           {
             id: signUpData.user.id,
             username: data.username,
-            avatar_url: defaultAvatarUrl,
           },
         ]);
 
         if (profileError) throw profileError;
 
-        alert("Регистрация прошла успешно! Проверьте почту для подтверждения.");
+        onClose();
       } else {
         const { data: signInData, error: signInError } =
           await supabase.auth.signInWithPassword({
@@ -49,7 +46,6 @@ const AuthModal = ({ isOpen, onClose }) => {
 
         if (signInError) throw signInError;
 
-        alert("Вход выполнен успешно");
         onClose();
       }
     } catch (error) {
@@ -179,21 +175,6 @@ const AuthModal = ({ isOpen, onClose }) => {
           </button>
         </p>
       </div>
-      <p className="mt-4 text-center text-sm">Или войдите через</p>
-      <button
-        type="button"
-        onClick={() => console.log("Google Auth")}
-        className="ml-2"
-      >
-        Google
-      </button>
-      <button
-        type="button"
-        onClick={() => console.log("Facebook Auth")}
-        className="ml-2"
-      >
-        Apple
-      </button>
     </Modal>
   );
 };

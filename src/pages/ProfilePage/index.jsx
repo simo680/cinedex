@@ -1,79 +1,122 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useState,useEffect } from "react";
-import  supabase  from "../../services/supabase/supabase"; // подключение клиента
+import supabase from "../../services/supabase/supabase";
+import { useAuth } from "../../context/useAuth";
 import HorizontalScrollList from "../../components/HorizontalScrollList";
 
-// Заглушки для фильмов, добавленных пользователем (только постеры)
-const dummyMovies = [
-  { id: 1, poster_path: "/path_to_poster1.jpg" },
-  { id: 2, poster_path: "/path_to_poster2.jpg" },
-  { id: 3, poster_path: "/path_to_poster3.jpg" },
-];
-
-
-
 const ProfilePage = () => {
-  const [username, setUsername] = useState("username123");
+  const { user, logout } = useAuth();
+  const [username, setUsername] = useState("Пользователь");
+  const [avatarUrl, setAvatarUrl] = useState("/default-avatar.png");
   const [isEditing, setIsEditing] = useState(false);
   const [avatarFile, setAvatarFile] = useState(null);
+  const [movies, setMovies] = useState([]);
 
-  // useEffect(() => {
-  //   // Получение ID текущего пользователя (например, из авторизации)
-  //   const fetchUser = async () => {
-  //     const user = supabase.auth.user(); // Получаем текущего авторизованного пользователя
-  //     if (user) {
-  //       setUserId(user.id); // Сохраняем ID пользователя
-  //     }
-  //   };
-  //   fetchUser();
-  // }, []);
+  // Загружаем профиль из Supabase
+  useEffect(() => {
+    if (!user) return;
 
-  // useEffect(() => {
-  //   if (!userId) return; // Если ID пользователя нет, не запрашиваем фильмы
+    const fetchProfile = async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("username, avatar_url")
+        .eq("id", user.id)
+        .single();
 
-  //   const fetchMovies = async () => {
-  //     const { data, error } = await supabase
-  //       .from("movies")
-  //       .select("id, poster_path")
-  //       .eq("user_id", userId); // Запрос только фильмов, добавленных этим пользователем
+      if (error) {
+        console.error("Ошибка загрузки профиля:", error.message);
+      } else {
+        setUsername(data.username || "Пользователь");
+        setAvatarUrl(data.avatar_url || "/default-avatar.png");
+      }
+    };
 
-  //     if (error) {
-  //       console.error("Ошибка при загрузке фильмов:", error);
-  //     } else {
-  //       setMovies([
-  //         { id: "addFilm", poster_path: "/add-film-icon.jpg" },
-  //         ...data,
-  //       ]);
-  //     }
-  //   };
+    fetchProfile();
+  }, [user]);
 
-  //   fetchMovies();
-  // }, [userId]); // Запрашиваем фильмы, когда userId изменится
+  // Обновление имени пользователя
+  const handleUsernameBlur = async () => {
+    setIsEditing(false);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ username })
+      .eq("id", user.id);
+    if (error) console.error("Ошибка обновления имени:", error.message);
+  };
 
-  const handleAvatarChange = (e) => {
+  // Загрузка и обновление аватара
+  const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setAvatarFile(file);
+    if (!file || !user) return;
+
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+    const filePath = `${fileName}`;
+
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from("avatars")
+      .upload(filePath, file, {
+        upsert: true,
+      });
+
+    if (uploadError) {
+      console.error("Ошибка загрузки аватара:", uploadError.message);
+      return;
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from("avatars")
+      .getPublicUrl(filePath);
+
+    const publicUrl = publicUrlData.publicUrl;
+
+    setAvatarUrl(publicUrl);
+
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({ avatar_url: publicUrl })
+      .eq("id", user.id);
+
+    if (updateError) {
+      console.error("Ошибка обновления аватара:", updateError.message);
     }
   };
+
+  // Получение фильмов пользователя
+  useEffect(() => {
+    if (!user) return;
+
+    // const fetchMovies = async () => {
+    //   const { data, error } = await supabase
+    //     .from("movies")
+    //     .select("id, poster_path")
+    //     .eq("user_id", user.id);
+
+    //   if (error) {
+    //     console.error("Ошибка загрузки фильмов:", error.message);
+    //   } else {
+    //     setMovies([
+    //       { id: "addFilm", poster_path: "/add-film-icon.jpg" },
+    //       ...data,
+    //     ]);
+    //   }
+    // };
+
+    // fetchMovies();
+  }, [user]);
 
   return (
     <>
       <div className="flex items-center justify-between p-4">
         <div className="group relative h-[280px] w-[280px]">
           <img
-            src={
-              avatarFile
-                ? URL.createObjectURL(avatarFile)
-                : "/default-avatar.png"
-            }
+            src={avatarFile ? URL.createObjectURL(avatarFile) : avatarUrl}
             alt="Аватар"
             className="h-full w-full rounded-full object-cover"
           />
-
           <label
             htmlFor="avatar-upload"
-            className="absolute inset-0 flex cursor-pointer items-center justify-center rounded-full bg-black/50 text-center text-2xl font-semibold opacity-0 transition-opacity group-hover:opacity-100"
+            className="absolute inset-0 flex cursor-pointer items-center justify-center rounded-full bg-black/50 text-2xl font-semibold opacity-0 transition-opacity group-hover:opacity-100"
           >
             Изменить фото
           </label>
@@ -92,7 +135,7 @@ const ProfilePage = () => {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              onBlur={() => setIsEditing(false)}
+              onBlur={handleUsernameBlur}
               autoFocus
               className="border-b border-gray-400 bg-transparent text-2xl font-semibold focus:border-red-500 focus:outline-none"
             />
@@ -105,39 +148,46 @@ const ProfilePage = () => {
             </h2>
           )}
         </div>
+
         <div className="flex flex-col items-end justify-center">
-          <button className="cursor-pointer bg-[var(--tertiary)] p-3 text-sm sm:px-20 sm:text-base">
+          <button
+            onClick={logout}
+            className="cursor-pointer bg-[var(--tertiary)] p-3 text-sm sm:px-20 sm:text-base"
+          >
             Выйти
           </button>
         </div>
       </div>
-      {/* <HorizontalScrollList
-        title="Мои фильмы"
-        items={movies}
-        renderItem={(item) =>
-          item.id === "addFilm" ? (
-            <Link to="/add-film">
-              <div className="flex h-[225px] w-[150px] flex-col items-center justify-center rounded-xl bg-[var(--tertiary)]">
-                <span className="text-[200px] leading-none">+</span>
-                <span className="text-2xl">Добавить фильм</span>
-              </div>
-            </Link>
-          ) : (
-            <div key={item.id} className="shrink-0">
-              <Link to={`/movies/${item.id}`}>
-                <img
-                  src={item.poster_path}
-                  alt="Movie Poster"
-                  className="h-[225px] w-[150px] rounded-xl transition-transform hover:scale-105"
-                />
+
+      <div className="my-10 px-4">
+        <HorizontalScrollList
+          title="Мои фильмы"
+          items={movies}
+          renderItem={(item) =>
+            item.id === "addFilm" ? (
+              <Link to="/add-film" key="addFilm">
+                <div className="flex h-[225px] w-[150px] flex-col items-center justify-center rounded-xl bg-[var(--tertiary)]">
+                  <span className="text-[200px] leading-none">+</span>
+                  <span className="text-2xl">Добавить фильм</span>
+                </div>
               </Link>
-            </div>
-          )
-        }
-        itemWidth="160px"
-      /> */}
-      <p className="text-center p-20">Горизонатальная прокрутка</p>
-      <div className="flex justify-center gap-4">
+            ) : (
+              <div key={item.id} className="shrink-0">
+                <Link to={`/movies/${item.id}`}>
+                  <img
+                    src={item.poster_path}
+                    alt="Movie Poster"
+                    className="h-[225px] w-[150px] rounded-xl transition-transform hover:scale-105"
+                  />
+                </Link>
+              </div>
+            )
+          }
+          itemWidth="160px"
+        />
+      </div>
+
+      <div className="flex justify-center gap-4 p-8">
         <Link to="/watchlist?status=watching">
           <img
             src="../frames/frame-watching.png"
@@ -165,3 +215,64 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+
+// useEffect(() => {
+//   // Получение ID текущего пользователя (например, из авторизации)
+//   const fetchUser = async () => {
+//     const user = supabase.auth.user(); // Получаем текущего авторизованного пользователя
+//     if (user) {
+//       setUserId(user.id); // Сохраняем ID пользователя
+//     }
+//   };
+//   fetchUser();
+// }, []);
+
+// useEffect(() => {
+//   if (!userId) return; // Если ID пользователя нет, не запрашиваем фильмы
+
+//   const fetchMovies = async () => {
+//     const { data, error } = await supabase
+//       .from("movies")
+//       .select("id, poster_path")
+//       .eq("user_id", userId); // Запрос только фильмов, добавленных этим пользователем
+
+//     if (error) {
+//       console.error("Ошибка при загрузке фильмов:", error);
+//     } else {
+//       setMovies([
+//         { id: "addFilm", poster_path: "/add-film-icon.jpg" },
+//         ...data,
+//       ]);
+//     }
+//   };
+
+//   fetchMovies();
+// }, [userId]); // Запрашиваем фильмы, когда userId изменится
+
+{
+  /* <HorizontalScrollList
+        title="Мои фильмы"
+        items={movies}
+        renderItem={(item) =>
+          item.id === "addFilm" ? (
+            <Link to="/add-film">
+              <div className="flex h-[225px] w-[150px] flex-col items-center justify-center rounded-xl bg-[var(--tertiary)]">
+                <span className="text-[200px] leading-none">+</span>
+                <span className="text-2xl">Добавить фильм</span>
+              </div>
+            </Link>
+          ) : (
+            <div key={item.id} className="shrink-0">
+              <Link to={`/movies/${item.id}`}>
+                <img
+                  src={item.poster_path}
+                  alt="Movie Poster"
+                  className="h-[225px] w-[150px] rounded-xl transition-transform hover:scale-105"
+                />
+              </Link>
+            </div>
+          )
+        }
+        itemWidth="160px"
+      /> */
+}

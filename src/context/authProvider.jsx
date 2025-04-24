@@ -8,9 +8,8 @@ const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Получаем текущего пользователя
     const getUser = async () => {
-      const { data, error } = await supabase.auth.getUser();
+      const { data } = await supabase.auth.getUser();
       setUser(data?.user || null);
       setIsLoading(false);
     };
@@ -18,7 +17,7 @@ const AuthProvider = ({ children }) => {
     getUser();
 
     const { data: listener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      async (_event, session) => {
         setUser(session?.user || null);
       },
     );
@@ -28,20 +27,25 @@ const AuthProvider = ({ children }) => {
     };
   }, []);
 
-  // const signInWithGoogle = async () => {
-  //   const { error } = await supabase.auth.signInWithOAuth({
-  //     provider: "google",
-  //   });
-  //   if (error) console.error("Ошибка входа через Google:", error.message);
-  // };
-
   const logout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) console.error("Ошибка выхода:", error.message);
   };
 
+  const updateProfile = async (newData) => {
+    const { data, error } = await supabase.auth.updateUser({
+      data: newData,
+    });
+
+    if (error) {
+      console.error("Ошибка обновления профиля:", error.message);
+    } else {
+      setUser(data.user); // обновляем данные
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isLoading, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, logout, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );

@@ -5,6 +5,7 @@ import Logo from "../../assets/square.svg?react";
 import CloseIcon from "../../assets/close.svg?react";
 import clsx from "clsx";
 import AuthModal from "../AuthModal";
+import { useAuth } from "../../context/useAuth"; // путь может отличаться
 
 const Header = () => {
   const location = useLocation();
@@ -25,7 +26,7 @@ const Header = () => {
   const handleLoginClick = () => setIsAuthOpen(true);
   const handleCloseAuthModal = () => setIsAuthOpen(false);
 
-  const user = null;
+  const { user } = useAuth();
 
   return (
     <>
@@ -98,7 +99,7 @@ const Header = () => {
                 onClick={handleLinkClick}
               >
                 <img
-                  src={user.avatar || "../default-avatar.png"}
+                  src={user?.avatar_url || "../default-avatar.png"}
                   alt="Аватар"
                   className="h-14 w-14 rounded-full object-cover"
                 />
