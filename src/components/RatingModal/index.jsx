@@ -1,14 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "../../components/Modal";
 import Star from "../../assets/star.svg?react";
 import ActiveStar from "../../assets/active-star.svg?react";
 import ActiveHalfStar from "../../assets/active-half-star.svg?react";
 
 const RatingModal = ({ isOpen, onClose, initialRating = 0, onSubmit }) => {
-  const [userRating, setUserRating] = useState(null);
+  const [userRating, setUserRating] = useState(initialRating); // Изначальная оценка
   const [hoverRating, setHoverRating] = useState(null);
   const [averageRating, setAverageRating] = useState(initialRating);
   const [lastClicked, setLastClicked] = useState(null); // ⭐ отслеживаем последнюю звезду
+
+  useEffect(() => {
+    setUserRating(initialRating); // Если пришла новая оценка, обновляем состояние
+    setAverageRating(initialRating);
+  }, [initialRating]);
 
   if (!isOpen) return null;
 
@@ -32,8 +37,12 @@ const RatingModal = ({ isOpen, onClose, initialRating = 0, onSubmit }) => {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <h2 className="mb-4 text-center text-2xl font-bold">Выставление оценки</h2>
-      <p className="mb-2 text-center text-[120px] font-bold">{averageRating || 0} </p>
+      <h2 className="mb-4 text-center text-2xl font-bold">
+        Выставление оценки
+      </h2>
+      <p className="mb-2 text-center text-[120px] font-bold">
+        {averageRating || 0}{" "}
+      </p>
 
       <div className="mb-4 flex justify-center gap-1">
         {Array.from({ length: 10 }, (_, i) => {

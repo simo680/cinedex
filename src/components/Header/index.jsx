@@ -26,7 +26,7 @@ const Header = () => {
   const handleLoginClick = () => setIsAuthOpen(true);
   const handleCloseAuthModal = () => setIsAuthOpen(false);
 
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
 
   return (
     <>
@@ -99,7 +99,7 @@ const Header = () => {
                 onClick={handleLinkClick}
               >
                 <img
-                  src={user?.avatar_url || "../default-avatar.png"}
+                  src={profile?.avatar_url || "../default-avatar.png"}
                   alt="Аватар"
                   className="h-14 w-14 rounded-full object-cover"
                 />

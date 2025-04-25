@@ -5,7 +5,7 @@ import { useAuth } from "../../context/useAuth";
 import HorizontalScrollList from "../../components/HorizontalScrollList";
 
 const ProfilePage = () => {
-  const { user, logout } = useAuth();
+  const { user, setProfile } = useAuth();
   const [username, setUsername] = useState("Пользователь");
   const [avatarUrl, setAvatarUrl] = useState("/default-avatar.png");
   const [isEditing, setIsEditing] = useState(false);
@@ -77,33 +77,25 @@ const ProfilePage = () => {
       .update({ avatar_url: publicUrl })
       .eq("id", user.id);
 
+    if (!updateError) {
+      // обновляем в контексте
+      setProfile((prev) => ({
+        ...prev,
+        avatar_url: publicUrl,
+      }));
+    } else {
+      console.error("Ошибка обновления аватара:", updateError.message);
+    }
+
     if (updateError) {
       console.error("Ошибка обновления аватара:", updateError.message);
     }
   };
 
-  // Получение фильмов пользователя
-  useEffect(() => {
-    if (!user) return;
-
-    // const fetchMovies = async () => {
-    //   const { data, error } = await supabase
-    //     .from("movies")
-    //     .select("id, poster_path")
-    //     .eq("user_id", user.id);
-
-    //   if (error) {
-    //     console.error("Ошибка загрузки фильмов:", error.message);
-    //   } else {
-    //     setMovies([
-    //       { id: "addFilm", poster_path: "/add-film-icon.jpg" },
-    //       ...data,
-    //     ]);
-    //   }
-    // };
-
-    // fetchMovies();
-  }, [user]);
+  const logout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) console.error("Ошибка выхода:", error.message);
+  };
 
   return (
     <>
@@ -149,42 +141,17 @@ const ProfilePage = () => {
           )}
         </div>
 
-        <div className="flex flex-col items-end justify-center">
+        <div className="flex flex-col items-end justify-center gap-3">
           <button
             onClick={logout}
             className="cursor-pointer bg-[var(--tertiary)] p-3 text-sm sm:px-20 sm:text-base"
           >
             Выйти
           </button>
+          <button className="cursor-pointer bg-[var(--tertiary)] p-3 text-sm sm:px-20 sm:text-base">
+            <Link to="/add-film">Добавить фильм</Link>
+          </button>
         </div>
-      </div>
-
-      <div className="my-10 px-4">
-        <HorizontalScrollList
-          title="Мои фильмы"
-          items={movies}
-          renderItem={(item) =>
-            item.id === "addFilm" ? (
-              <Link to="/add-film" key="addFilm">
-                <div className="flex h-[225px] w-[150px] flex-col items-center justify-center rounded-xl bg-[var(--tertiary)]">
-                  <span className="text-[200px] leading-none">+</span>
-                  <span className="text-2xl">Добавить фильм</span>
-                </div>
-              </Link>
-            ) : (
-              <div key={item.id} className="shrink-0">
-                <Link to={`/movies/${item.id}`}>
-                  <img
-                    src={item.poster_path}
-                    alt="Movie Poster"
-                    className="h-[225px] w-[150px] rounded-xl transition-transform hover:scale-105"
-                  />
-                </Link>
-              </div>
-            )
-          }
-          itemWidth="160px"
-        />
       </div>
 
       <div className="flex justify-center gap-4 p-8">
@@ -249,8 +216,8 @@ export default ProfilePage;
 //   fetchMovies();
 // }, [userId]); // Запрашиваем фильмы, когда userId изменится
 
-{
-  /* <HorizontalScrollList
+//{
+/* <HorizontalScrollList
         title="Мои фильмы"
         items={movies}
         renderItem={(item) =>
@@ -275,4 +242,4 @@ export default ProfilePage;
         }
         itemWidth="160px"
       /> */
-}
+//}

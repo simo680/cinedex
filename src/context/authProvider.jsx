@@ -5,20 +5,50 @@ export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const getUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      setUser(data?.user || null);
+    const getUserAndProfile = async () => {
+      const { data: authData } = await supabase.auth.getUser();
+      const currentUser = authData?.user || null;
+      setUser(currentUser);
+
+      if (currentUser) {
+        const { data: profileData, error } = await supabase
+          .from("profiles")
+          .select("username, avatar_url")
+          .eq("id", currentUser.id)
+          .single();
+
+        if (profileData && !error) {
+          setProfile(profileData);
+        }
+      }
+
       setIsLoading(false);
     };
 
-    getUser();
+    getUserAndProfile();
 
     const { data: listener } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
-        setUser(session?.user || null);
+        const currentUser = session?.user || null;
+        setUser(currentUser);
+
+        if (currentUser) {
+          const { data: profileData, error } = await supabase
+            .from("profiles")
+            .select("username, avatar_url")
+            .eq("id", currentUser.id)
+            .single();
+
+          if (profileData && !error) {
+            setProfile(profileData);
+          }
+        } else {
+          setProfile(null);
+        }
       },
     );
 
@@ -27,25 +57,8 @@ const AuthProvider = ({ children }) => {
     };
   }, []);
 
-  const logout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) console.error("Ошибка выхода:", error.message);
-  };
-
-  const updateProfile = async (newData) => {
-    const { data, error } = await supabase.auth.updateUser({
-      data: newData,
-    });
-
-    if (error) {
-      console.error("Ошибка обновления профиля:", error.message);
-    } else {
-      setUser(data.user); // обновляем данные
-    }
-  };
-
   return (
-    <AuthContext.Provider value={{ user, isLoading, logout, updateProfile }}>
+    <AuthContext.Provider value={{ user, isLoading, profile, setProfile }}>
       {children}
     </AuthContext.Provider>
   );

@@ -8,7 +8,7 @@ const App = () => {
     <>
       <div className="flex min-h-screen flex-col">
         <Header />
-        <main className="w-full px-4 py-20">
+        <main className="w-full flex-grow px-4 py-20">
           <div className="mx-auto max-w-[1440px]">
             <Outlet />
           </div>

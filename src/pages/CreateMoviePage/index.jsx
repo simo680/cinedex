@@ -1,50 +1,55 @@
 import { useForm, Controller } from "react-hook-form";
 import Select from "react-select";
+import { useAuth } from "../../context/useAuth";
 import { useState } from "react";
-
+import supabase from "../../services/supabase/supabase";
 const CreateMoviePage = () => {
+  const { user } = useAuth();
   const [isMovie, setIsMovie] = useState(true);
 
   const movieGenres = [
-    { value: "Action", label: "Боевик" },
-    { value: "Adventure", label: "Приключения" },
-    { value: "Animation", label: "Анимация" },
-    { value: "Comedy", label: "Комедия" },
-    { value: "Crime", label: "Преступление" },
-    { value: "Documentary", label: "Документальный" },
-    { value: "Drama", label: "Драма" },
-    { value: "Family", label: "Семейный" },
-    { value: "Fantasy", label: "Фантастика" },
-    { value: "History", label: "История" },
-    { value: "Horror", label: "Ужасы" },
-    { value: "Music", label: "Музыка" },
-    { value: "Mystery", label: "Мистика" },
-    { value: "Romance", label: "Романтика" },
-    { value: "Science Fiction", label: "Научная фантастика" },
-    { value: "TV Movie", label: "ТВ фильм" },
-    { value: "Thriller", label: "Триллер" },
-    { value: "War", label: "Война" },
-    { value: "Western", label: "Вестерн" },
+    { value: "Боевик", label: "Боевик" },
+    { value: "Приключение", label: "Приключения" },
+    { value: "Анимация", label: "Анимация" },
+    { value: "Комедия", label: "Комедия" },
+    { value: "Преступление", label: "Преступление" },
+    { value: "Документальный", label: "Документальный" },
+    { value: "Драма", label: "Драма" },
+    { value: "Семейный", label: "Семейный" },
+    { value: "Фантастика", label: "Фантастика" },
+    { value: "История", label: "История" },
+    { value: "Ужасы", label: "Ужасы" },
+    { value: "Музыка", label: "Музыка" },
+    { value: "Мистика", label: "Мистика" },
+    { value: "Романтика", label: "Романтика" },
+    { value: "Научная Фантастика", label: "Научная фантастика" },
+    { value: "ТВ фильм", label: "ТВ фильм" },
+    { value: "Триллер", label: "Триллер" },
+    { value: "Война", label: "Война" },
+    { value: "Вестерн", label: "Вестерн" },
   ];
 
   // Жанры для сериалов на русском
   const tvGenres = [
-    { value: "Action & Adventure", label: "Экшн и Приключения" },
-    { value: "Animation", label: "Анимация" },
-    { value: "Comedy", label: "Комедия" },
-    { value: "Crime", label: "Преступление" },
-    { value: "Documentary", label: "Документальный" },
-    { value: "Drama", label: "Драма" },
-    { value: "Family", label: "Семейный" },
-    { value: "Kids", label: "Детский" },
-    { value: "Mystery", label: "Мистика" },
-    { value: "News", label: "Новости" },
-    { value: "Reality", label: "Реалити-шоу" },
-    { value: "Sci-Fi & Fantasy", label: "Научная фантастика и Фэнтези" },
-    { value: "Soap", label: "Мыльная опера" },
-    { value: "Talk", label: "Ток-шоу" },
-    { value: "War & Politics", label: "Война и Политика" },
-    { value: "Western", label: "Вестерн" },
+    { value: "Экшн и Приключения", label: "Экшн и Приключения" },
+    { value: "Анимация", label: "Анимация" },
+    { value: "Комедия", label: "Комедия" },
+    { value: "Преступление", label: "Преступление" },
+    { value: "Документальный", label: "Документальный" },
+    { value: "Драма", label: "Драма" },
+    { value: "Семейный", label: "Семейный" },
+    { value: "Детский", label: "Детский" },
+    { value: "Мистика", label: "Мистика" },
+    { value: "Новости", label: "Новости" },
+    { value: "Реалити-шоу", label: "Реалити-шоу" },
+    {
+      value: "Научная фантастика и Фэнтези",
+      label: "Научная фантастика и Фэнтези",
+    },
+    { value: "Мыльная опера", label: "Мыльная опера" },
+    { value: "Ток-шоу", label: "Ток-шоу" },
+    { value: "Война и Политика", label: "Война и Политика" },
+    { value: "Война и Политика", label: "Вестерн" },
   ];
 
   const ageRatingOptions = [
@@ -60,10 +65,74 @@ const CreateMoviePage = () => {
     { value: "no", label: "Нет" },
   ];
 
-  const { register, handleSubmit, control } = useForm();
+  const { register, handleSubmit, control, reset } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      const {
+        title,
+        releaseDate,
+        duration,
+        ageRating,
+        genres,
+        monetization,
+        description,
+        poster,
+        media_type,
+      } = data;
+
+      // 1. Обработка загрузки постера
+      let posterUrl = null;
+      const file = poster?.[0];
+
+      if (file) {
+        const fileExt = file.name.split(".").pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+        const filePath = `posters/${user.id}/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("posters") // Имя твоего bucket в Supabase Storage
+          .upload(filePath, file);
+
+        if (uploadError) {
+          console.error("Ошибка при загрузке файла", uploadError.message);
+          throw new Error("Ошибка при загрузке файла");
+        }
+
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from("posters").getPublicUrl(filePath);
+
+        posterUrl = publicUrl;
+      }
+
+      // 2. Добавление в таблицу movies
+      const { error: insertError } = await supabase.from("movies").insert([
+        {
+          user_id: user.id,
+          title,
+          release_date: releaseDate,
+          duration: parseInt(duration),
+          age_rating: ageRating.value,
+          genres: genres.map((genre) => genre.value),
+          monetized: monetization?.value === "yes",
+          description,
+          poster_url: posterUrl,
+          media_type: media_type.value,
+        },
+      ]);
+
+      if (insertError) {
+        console.error("Ошибка при добавлении фильма:", insertError.message);
+        alert("Ошибка при добавлении фильма");
+      } else {
+        alert("Фильм успешно добавлен!");
+        reset();
+      }
+    } catch (error) {
+      console.error("Ошибка:", error.message);
+      alert("Произошла ошибка при добавлении фильма");
+    }
   };
 
   const customTheme = (theme) => ({
@@ -130,7 +199,7 @@ const CreateMoviePage = () => {
         <div>
           <label className="block">Тип</label>
           <Controller
-            name="type"
+            name="media_type"
             control={control}
             rules={{ required: true }}
             render={({ field }) => (
@@ -145,6 +214,7 @@ const CreateMoviePage = () => {
                 placeholder="Выберите тип"
                 isSearchable={false}
                 onChange={(selectedOption) => {
+                  field.onChange(selectedOption);
                   setIsMovie(selectedOption.value === "movie");
                 }}
               />
