@@ -327,7 +327,7 @@ const CreateMoviePage = () => {
 
         <button
           type="submit"
-          className="w-full cursor-pointer rounded bg-red-700 py-2 text-white outline-none hover:bg-red-800"
+          className="w-full cursor-pointer rounded bg-red-700 py-2 outline-none hover:bg-red-800"
         >
           Отправить
         </button>

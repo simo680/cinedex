@@ -1,8 +1,8 @@
 export const imagePath = "https://image.tmdb.org/t/p/w500";
 export const imagePathOriginal = "https://image.tmdb.org/t/p/original";
 
-const baseUrl = import.meta.env.VITE_TMDB_API_URL;
-const apiKey = import.meta.env.VITE_TMDB_API_KEY;
+export const baseUrl = import.meta.env.VITE_TMDB_API_URL;
+export const apiKey = import.meta.env.VITE_TMDB_API_KEY;
 
 export const fetchCategoryMovies = async (categoryType) => {
   const url = `${baseUrl}/movie/${categoryType}?language=ru-RU&page=1`;

@@ -26,7 +26,9 @@ function ContentDetailPage({ type }) {
     const loadData = async () => {
       try {
         const isUUID =
-          /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
+          /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+            id,
+          );
 
         let contentId;
 
@@ -154,7 +156,9 @@ function ContentDetailPage({ type }) {
 
   const title = data.title || data.name;
   const releaseDate = data.release_date || data.first_air_date;
-  const runtime = isLocalMovie ? data.duration : data.runtime || data.episode_run_time?.[0];
+  const runtime = isLocalMovie
+    ? data.duration
+    : data.runtime || data.episode_run_time?.[0];
   const poster = isLocalMovie
     ? data.poster_url
     : `https://image.tmdb.org/t/p/w500${data.poster_path}`;
@@ -173,12 +177,18 @@ function ContentDetailPage({ type }) {
 
           <div className="flex h-full flex-1 flex-col justify-between space-y-4">
             <div>
-              <h1 className="text-3xl font-bold sm:text-4xl md:text-5xl">{title}</h1>
+              <h1 className="text-3xl font-bold sm:text-4xl md:text-5xl">
+                {title}
+              </h1>
               <ul className="mt-2 flex flex-wrap gap-4 text-[14px] sm:gap-6 sm:text-[16px] md:gap-8 md:text-[18px]">
                 <li>{releaseDate}</li>
                 <li>{runtime} мин</li>
                 <li>
-                  {isLocalMovie ? `${data.age_rating || "0"}` : data.adult ? "18+" : "0+"}
+                  {isLocalMovie
+                    ? `${data.age_rating || "0"}`
+                    : data.adult
+                      ? "18+"
+                      : "0+"}
                 </li>
               </ul>
 
@@ -222,9 +232,7 @@ function ContentDetailPage({ type }) {
                 </button>
                 <button
                   className={`cursor-pointer px-2 py-1 text-sm hover:bg-blue-700 sm:text-base ${
-                    userStatus === "заброшено"
-                      ? "bg-blue-700"
-                      : "bg-blue-600"
+                    userStatus === "заброшено" ? "bg-blue-700" : "bg-blue-600"
                   }`}
                   onClick={() => saveStatus("заброшено")}
                 >

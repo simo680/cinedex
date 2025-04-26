@@ -1,19 +1,16 @@
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { searchByTitle } from "../../services/api";
-import supabase from "../../services/supabase/supabase"; // импортируем supabase
+import { searchMoviesInSupabase } from "../../services/supabase/supastore";
 
 const SearchPage = () => {
   const location = useLocation();
-  const query = new URLSearchParams(location.search).get("q");
-
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const query = new URLSearchParams(location.search).get("q");
-
     if (!query) return;
 
     const fetchData = async () => {
@@ -21,21 +18,9 @@ const SearchPage = () => {
       setError(null);
 
       try {
-        // 1. Поиск по TMDb (если нужно)
         const tmdbResults = await searchByTitle(query);
-        console.log("Результаты поиска TMDb:", tmdbResults);
+        const supabaseMovies = await searchMoviesInSupabase(query);
 
-        // 2. Поиск по локальной базе данных (Supabase)
-        const { data: supabaseMovies, error: supabaseError } = await supabase
-          .from("movies")
-          .select("*")
-          .ilike("title", `%${query}%`);
-        console.log("Результаты поиска Supabase:", supabaseMovies);
-        if (supabaseError) {
-          throw new Error(supabaseError.message);
-        }
-
-        // 3. Объединяем результаты
         const combinedResults = [...tmdbResults, ...supabaseMovies];
         setResults(combinedResults);
       } catch (err) {
@@ -74,12 +59,12 @@ const SearchPage = () => {
               : item.poster_url;
 
             return (
-              <Link key={item.id} to={path} className="movie-card">
+              <Link key={item.id} to={path} className="">
                 {posterUrl ? (
                   <img
-                    src={posterUrl} // Используем правильный источник для постеров
+                    src={posterUrl}
                     alt={title}
-                    className="h-[412px] w-full shadow"
+                    className="h-[345px] w-[229px]"
                   />
                 ) : (
                   <div className="text-center">Нет постера</div>

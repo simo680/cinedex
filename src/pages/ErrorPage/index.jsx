@@ -10,7 +10,7 @@ const ErrorPage = () => {
 
       <Link
         to="/"
-        className="inline-flex items-center justify-center bg-[var(--tertiary)] px-8 py-3 text-white transition hover:opacity-80 md:px-32 md:py-4"
+        className="inline-flex items-center justify-center bg-[var(--tertiary)] px-8 py-3 transition hover:opacity-80 md:px-32 md:py-4"
       >
         Вернуться на главную
       </Link>

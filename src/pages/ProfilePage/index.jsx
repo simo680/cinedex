@@ -1,95 +1,35 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import supabase from "../../services/supabase/supabase";
 import { useAuth } from "../../context/useAuth";
-import HorizontalScrollList from "../../components/HorizontalScrollList";
+import { uploadAvatar } from "../../services/supabase/supastore";
+import supabase from "../../services/supabase/supabase";
 
 const ProfilePage = () => {
-  const { user, setProfile } = useAuth();
-  const [username, setUsername] = useState("Пользователь");
-  const [avatarUrl, setAvatarUrl] = useState("/default-avatar.png");
+  const { user, profile, setProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  const [avatarFile, setAvatarFile] = useState(null);
-  const [movies, setMovies] = useState([]);
 
-  // Загружаем профиль из Supabase
-  useEffect(() => {
-    if (!user) return;
+  const handleUsernameChange = (e) => {
+    setProfile((prev) => ({
+      ...prev,
+      username: e.target.value,
+    }));
+  };
 
-    const fetchProfile = async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("username, avatar_url")
-        .eq("id", user.id)
-        .single();
-
-      if (error) {
-        console.error("Ошибка загрузки профиля:", error.message);
-      } else {
-        setUsername(data.username || "Пользователь");
-        setAvatarUrl(data.avatar_url || "/default-avatar.png");
-      }
-    };
-
-    fetchProfile();
-  }, [user]);
-
-  // Обновление имени пользователя
   const handleUsernameBlur = async () => {
     setIsEditing(false);
+    if (!profile) return;
+
     const { error } = await supabase
       .from("profiles")
-      .update({ username })
+      .update({ username: profile.username })
       .eq("id", user.id);
+
     if (error) console.error("Ошибка обновления имени:", error.message);
   };
 
-  // Загрузка и обновление аватара
-  const handleAvatarChange = async (e) => {
+  const handleAvatarChange = (e) => {
     const file = e.target.files[0];
-    if (!file || !user) return;
-
-    const fileExt = file.name.split(".").pop();
-    const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-    const filePath = `${fileName}`;
-
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from("avatars")
-      .upload(filePath, file, {
-        upsert: true,
-      });
-
-    if (uploadError) {
-      console.error("Ошибка загрузки аватара:", uploadError.message);
-      return;
-    }
-
-    const { data: publicUrlData } = supabase.storage
-      .from("avatars")
-      .getPublicUrl(filePath);
-
-    const publicUrl = publicUrlData.publicUrl;
-
-    setAvatarUrl(publicUrl);
-
-    const { error: updateError } = await supabase
-      .from("profiles")
-      .update({ avatar_url: publicUrl })
-      .eq("id", user.id);
-
-    if (!updateError) {
-      // обновляем в контексте
-      setProfile((prev) => ({
-        ...prev,
-        avatar_url: publicUrl,
-      }));
-    } else {
-      console.error("Ошибка обновления аватара:", updateError.message);
-    }
-
-    if (updateError) {
-      console.error("Ошибка обновления аватара:", updateError.message);
-    }
+    uploadAvatar(file, user, setProfile);
   };
 
   const logout = async () => {
@@ -97,12 +37,16 @@ const ProfilePage = () => {
     if (error) console.error("Ошибка выхода:", error.message);
   };
 
+  if (!profile) {
+    return <div>Загрузка профиля...</div>;
+  }
+
   return (
     <>
       <div className="flex items-center justify-between p-4">
         <div className="group relative h-[280px] w-[280px]">
           <img
-            src={avatarFile ? URL.createObjectURL(avatarFile) : avatarUrl}
+            src={profile.avatar_url || "/default-avatar.png"}
             alt="Аватар"
             className="h-full w-full rounded-full object-cover"
           />
@@ -125,8 +69,8 @@ const ProfilePage = () => {
           {isEditing ? (
             <input
               type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={profile.username || "Пользователь"}
+              onChange={handleUsernameChange}
               onBlur={handleUsernameBlur}
               autoFocus
               className="border-b border-gray-400 bg-transparent text-2xl font-semibold focus:border-red-500 focus:outline-none"
@@ -136,7 +80,7 @@ const ProfilePage = () => {
               className="cursor-pointer text-2xl font-semibold transition hover:text-red-500"
               onClick={() => setIsEditing(true)}
             >
-              {username}
+              {profile.username || "Пользователь"}
             </h2>
           )}
         </div>
@@ -169,7 +113,7 @@ const ProfilePage = () => {
             className="cursor-pointer transition-transform hover:scale-105"
           />
         </Link>
-        <Link to="/watchlist?status=dropped">
+        <Link to="/watchlist?status=abandoned">
           <img
             src="../frames/frame-dropped.png"
             alt="Заброшено"
@@ -182,64 +126,3 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
-
-// useEffect(() => {
-//   // Получение ID текущего пользователя (например, из авторизации)
-//   const fetchUser = async () => {
-//     const user = supabase.auth.user(); // Получаем текущего авторизованного пользователя
-//     if (user) {
-//       setUserId(user.id); // Сохраняем ID пользователя
-//     }
-//   };
-//   fetchUser();
-// }, []);
-
-// useEffect(() => {
-//   if (!userId) return; // Если ID пользователя нет, не запрашиваем фильмы
-
-//   const fetchMovies = async () => {
-//     const { data, error } = await supabase
-//       .from("movies")
-//       .select("id, poster_path")
-//       .eq("user_id", userId); // Запрос только фильмов, добавленных этим пользователем
-
-//     if (error) {
-//       console.error("Ошибка при загрузке фильмов:", error);
-//     } else {
-//       setMovies([
-//         { id: "addFilm", poster_path: "/add-film-icon.jpg" },
-//         ...data,
-//       ]);
-//     }
-//   };
-
-//   fetchMovies();
-// }, [userId]); // Запрашиваем фильмы, когда userId изменится
-
-//{
-/* <HorizontalScrollList
-        title="Мои фильмы"
-        items={movies}
-        renderItem={(item) =>
-          item.id === "addFilm" ? (
-            <Link to="/add-film">
-              <div className="flex h-[225px] w-[150px] flex-col items-center justify-center rounded-xl bg-[var(--tertiary)]">
-                <span className="text-[200px] leading-none">+</span>
-                <span className="text-2xl">Добавить фильм</span>
-              </div>
-            </Link>
-          ) : (
-            <div key={item.id} className="shrink-0">
-              <Link to={`/movies/${item.id}`}>
-                <img
-                  src={item.poster_path}
-                  alt="Movie Poster"
-                  className="h-[225px] w-[150px] rounded-xl transition-transform hover:scale-105"
-                />
-              </Link>
-            </div>
-          )
-        }
-        itemWidth="160px"
-      /> */
-//}
