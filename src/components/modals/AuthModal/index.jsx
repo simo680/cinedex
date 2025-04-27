@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import clsx from "clsx";
-import Modal from "../Modal";
-import OpenEyeIcon from "../../assets/open-eye.svg?react";
-import CloseEyeIcon from "../../assets/close-eye.svg?react";
-import supabase from "../../services/supabase/supabase";
+import Modal from "../../Modal";
+import OpenEyeIcon from "../../../assets/open-eye.svg?react";
+import CloseEyeIcon from "../../../assets/close-eye.svg?react";
+import supabase from "../../../services/supabase/supabase";
 
 const AuthModal = ({ isOpen, onClose }) => {
   const {
@@ -70,7 +70,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                 required: "Введите имя",
                 pattern: {
                   value: /^[a-zA-Z0-9_-]{3,15}$/,
-                  message: "Введите корректный логин",
+                  message: "Имя должно содержать только буквы и цифры",
                 },
               })}
               className={clsx(
@@ -126,8 +126,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                 required: "Введите пароль",
                 pattern: {
                   value: /^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9]).{6,})$/,
-                  message:
-                    "Пароль должен содержать минимум 6 символов, включая заглавные буквы и цифры",
+                  message: "Пароль должен содержать минимум 6 символов",
                 },
               })}
               className={clsx(

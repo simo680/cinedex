@@ -1,16 +1,20 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
+import { useLoader } from "../../context/loaderProvider";
+import Loader from "../ui/Loader";
 
 const Discover = ({ fetchData, routePrefix }) => {
   const [items, setItems] = useState([]);
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState("popularity.desc");
-  const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const loader = useRef(null);
+  const [localLoading, setLocalLoading] = useState(false); // локальный лоадинг
+  const loaderRef = useRef(null);
+
+  const { showLoader, hideLoader } = useLoader(); // оставляем только если хочешь глобальный лоадер при первой загрузке
 
   const loadItems = useCallback(async () => {
-    setLoading(true);
+    setLocalLoading(true); // локальный лоадинг включаем
     try {
       const res = await fetchData(sortBy, page);
 
@@ -32,12 +36,13 @@ const Discover = ({ fetchData, routePrefix }) => {
     } catch (err) {
       console.error("Ошибка при загрузке:", err);
     }
-    setLoading(false);
+    setLocalLoading(false); // локальный лоадинг выключаем
   }, [sortBy, page, fetchData]);
 
   useEffect(() => {
-    loadItems();
-  }, [loadItems]);
+    showLoader(); // показываем глобальный лоадер при старте
+    loadItems().then(hideLoader); // загружаем первую партию и прячем глобальный лоадер
+  }, [loadItems, showLoader, hideLoader]);
 
   useEffect(() => {
     setItems([]);
@@ -46,18 +51,17 @@ const Discover = ({ fetchData, routePrefix }) => {
   }, [sortBy]);
 
   useEffect(() => {
-    if (loading) return;
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasMore) {
+        if (entries[0].isIntersecting && hasMore && !localLoading) {
           setPage((prev) => prev + 1);
         }
       },
       { threshold: 1 },
     );
-    if (loader.current) observer.observe(loader.current);
+    if (loaderRef.current) observer.observe(loaderRef.current);
     return () => observer.disconnect();
-  }, [loading, hasMore]);
+  }, [localLoading, hasMore]);
 
   return (
     <div>
@@ -89,8 +93,14 @@ const Discover = ({ fetchData, routePrefix }) => {
         ))}
       </div>
 
-      {loading && <p className="my-6 text-center">Загрузка...</p>}
-      <div ref={loader} className="h-10"></div>
+      {/* Лоадер внизу страницы */}
+      {localLoading && (
+        <div className="my-6 flex justify-center">
+          <Loader />
+        </div>
+      )}
+      {/* Сюда цепляем observer */}
+      <div ref={loaderRef} className="h-10"></div>
     </div>
   );
 };

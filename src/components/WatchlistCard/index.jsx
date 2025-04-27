@@ -47,15 +47,11 @@ function WatchlistCard({ id }) {
   }, [id]);
 
   if (!posterUrl) {
-    return <div className="h-[300px] w-full animate-pulse bg-gray-300" />;
+    return <div className="h-auto w-full animate-pulse bg-gray-300" />;
   }
 
   return (
-    <img
-      src={posterUrl}
-      alt="Постер"
-      className="h-auto w-full object-cover shadow"
-    />
+    <img src={posterUrl} alt="Постер" className="h-auto w-full object-cover" />
   );
 }
 

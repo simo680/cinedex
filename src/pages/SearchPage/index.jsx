@@ -2,20 +2,25 @@ import { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { searchByTitle } from "../../services/api";
 import { searchMoviesInSupabase } from "../../services/supabase/supastore";
+import Loader from "../../components/ui/Loader";
+import { useLoader } from "../../context/loaderProvider";
 
 const SearchPage = () => {
   const location = useLocation();
   const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { isLoading, showLoader, hideLoader } = useLoader();
+
+  const query = new URLSearchParams(location.search).get("q");
 
   useEffect(() => {
-    const query = new URLSearchParams(location.search).get("q");
     if (!query) return;
+    setResults([]);
+    setError(null);
+    console.log(query);
 
     const fetchData = async () => {
-      setLoading(true);
-      setError(null);
+      showLoader();
 
       try {
         const tmdbResults = await searchByTitle(query);
@@ -27,14 +32,14 @@ const SearchPage = () => {
         console.error("Ошибка при поиске:", err);
         setError("Произошла ошибка при поиске.");
       } finally {
-        setLoading(false);
+        hideLoader();
       }
     };
 
     fetchData();
-  }, [location.search]);
+  }, [query]);
 
-  if (loading) return <div className="p-4">Загрузка...</div>;
+  if (isLoading) return <Loader />;
   if (error) return <div className="p-4 text-red-500">{error}</div>;
 
   return (
@@ -64,7 +69,7 @@ const SearchPage = () => {
                   <img
                     src={posterUrl}
                     alt={title}
-                    className="h-[345px] w-[229px]"
+                    className="h-[240px] w-full object-cover sm:h-[280px] md:h-[320px] lg:h-[360px]"
                   />
                 ) : (
                   <div className="text-center">Нет постера</div>

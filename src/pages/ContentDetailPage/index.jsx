@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchDetails, fetchCredits, fetchImages } from "../../services/api";
 import HorizontalScrollList from "../../components/HorizontalScrollList";
-import DonateModal from "../../components/DonateModal";
+import DonateModal from "../../components/modals/DonateModal";
 import ClockIcon from "../../assets/clock.svg?react";
 import PauseIcon from "../../assets/pause.svg?react";
 import SuccessIcon from "../../assets/success.svg?react";
-import RatingModal from "../../components/RatingModal";
+import RatingModal from "../../components/modals/RatingModal";
 import supabase from "../../services/supabase/supabase";
+import Loader from "../../components/ui/Loader";
 import { useAuth } from "../../context/useAuth";
 
 function ContentDetailPage({ type }) {
@@ -18,7 +19,7 @@ function ContentDetailPage({ type }) {
   const [isDonateOpen, setIsDonateOpen] = useState(false);
   const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
   const [userRating, setUserRating] = useState(null);
-  const [userStatus, setUserStatus] = useState(null); // Новый статус
+  const [userStatus, setUserStatus] = useState(null);
   const [isLocalMovie, setIsLocalMovie] = useState(false);
   const { user } = useAuth();
 
@@ -152,7 +153,7 @@ function ContentDetailPage({ type }) {
     }
   };
 
-  if (!data) return <div className="p-10 text-center">Загрузка...</div>;
+  if (!data) return <Loader/>
 
   const title = data.title || data.name;
   const releaseDate = data.release_date || data.first_air_date;
@@ -167,11 +168,11 @@ function ContentDetailPage({ type }) {
     <>
       <div>
         <div className="flex flex-col gap-8 md:flex-col lg:flex-row lg:items-stretch">
-          <div className="w-full lg:w-auto">
+          <div className="w-full flex justify-center lg:w-auto lg:justify-start">
             <img
               src={poster}
               alt={title}
-              className="mx-auto h-auto w-full max-w-[300px] lg:mx-0"
+              className="mx-auto h-auto w-[300px] lg:mx-0"
             />
           </div>
 

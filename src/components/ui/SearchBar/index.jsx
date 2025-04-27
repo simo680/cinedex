@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import searchIcon from "../../assets/search.svg";
+import searchIcon from "../../../assets/search.svg";
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
@@ -14,6 +14,7 @@ const SearchBar = () => {
     event.preventDefault();
     if (query.trim() || event.key === "Enter") {
       navigate(`/search?q=${query}`);
+      setQuery("");
     }
   };
 

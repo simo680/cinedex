@@ -3,6 +3,9 @@ import Select from "react-select";
 import { useAuth } from "../../context/useAuth";
 import { useState } from "react";
 import supabase from "../../services/supabase/supabase";
+import clsx from "clsx";
+
+
 const CreateMoviePage = () => {
   const { user } = useAuth();
   const [isMovie, setIsMovie] = useState(true);
@@ -227,7 +230,8 @@ const CreateMoviePage = () => {
           <input
             {...register("title", { required: true })}
             className={inputStyles.base}
-            placeholder="Введите название фильма"
+            placeholder="Введите название"
+            maxLength={100}
           />
         </div>
 
@@ -313,6 +317,7 @@ const CreateMoviePage = () => {
             className={`${inputStyles.base} resize-none`}
             rows="6"
             placeholder="Введите краткое описание фильма"
+            maxLength={500}
           />
         </div>
 

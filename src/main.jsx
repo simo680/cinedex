@@ -16,6 +16,7 @@ import ContentDetailPage from "./pages/ContentDetailPage/index.jsx";
 import ErrorPage from "./pages/ErrorPage/index.jsx";
 import CreateMoviePage from "./pages/CreateMoviePage/index.jsx";
 import AuthProvider from "./context/authProvider.jsx";
+import LoaderProvider from "./context/loaderProvider.jsx";
 
 const router = createBrowserRouter([
   {
@@ -90,7 +91,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
-      <RouterProvider router={router} />
+      <LoaderProvider>
+        <RouterProvider router={router} />
+      </LoaderProvider>
     </AuthProvider>
   </StrictMode>,
 );

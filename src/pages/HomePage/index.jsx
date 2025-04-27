@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import HorizontalScrollList from "../../components/HorizontalScrollList";
 import { fetchCategoryMovies } from "../../services/api";
+import { useLoader } from "../../context/loaderProvider"; 
+import Loader from "../../components/ui/Loader";
 
 const categories = [
   { title: "Популярное", type: "popular" },
@@ -11,10 +13,11 @@ const categories = [
 
 const HomePage = () => {
   const [data, setData] = useState({});
-  const [loading, setLoading] = useState(true);
+  const { showLoader, hideLoader, isLoading } = useLoader();
 
   useEffect(() => {
     const fetchData = async () => {
+      showLoader();
       const allMovies = await Promise.all(
         categories.map(async (cat) => {
           const movies = await fetchCategoryMovies(cat.type);
@@ -26,14 +29,14 @@ const HomePage = () => {
         {},
       );
       setData(movieData);
-      setLoading(false);
+      hideLoader();
     };
 
     fetchData();
-  }, []);
+  }, [showLoader, hideLoader]);
 
-  if (loading) {
-    return <div>Загрузка...</div>;
+  if (isLoading) {
+    return <Loader/>;
   }
 
   return (

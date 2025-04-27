@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../context/useAuth";
 import { uploadAvatar } from "../../services/supabase/supastore";
 import supabase from "../../services/supabase/supabase";
+import Loader from "../../components/ui/Loader";
 
 const ProfilePage = () => {
   const { user, profile, setProfile } = useAuth();
@@ -38,7 +39,11 @@ const ProfilePage = () => {
   };
 
   if (!profile) {
-    return <div>Загрузка профиля...</div>;
+    return (
+      <div className="flex h-[calc(100vh-100px)] items-center justify-center">
+        <Loader />
+      </div>
+    );
   }
 
   return (
@@ -88,12 +93,14 @@ const ProfilePage = () => {
         <div className="flex flex-col items-end justify-center gap-3">
           <button
             onClick={logout}
-            className="cursor-pointer bg-[var(--tertiary)] p-3 text-sm sm:px-20 sm:text-base"
+            className="w-full cursor-pointer bg-[var(--tertiary)] p-3 text-sm sm:px-20 sm:text-base"
           >
             Выйти
           </button>
-          <button className="cursor-pointer bg-[var(--tertiary)] p-3 text-sm sm:px-20 sm:text-base">
-            <Link to="/add-film">Добавить фильм</Link>
+          <button className="w-full cursor-pointer bg-[var(--accent)] p-3 text-sm sm:px-20 sm:text-base">
+            <Link to="/add-film" className="block w-full text-center">
+              Добавить фильм
+            </Link>
           </button>
         </div>
       </div>

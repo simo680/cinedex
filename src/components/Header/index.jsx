@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import SearchBar from "../SearchBar";
+import SearchBar from "../ui/SearchBar";
 import Logo from "../../assets/square.svg?react";
 import CloseIcon from "../../assets/close.svg?react";
 import clsx from "clsx";
-import AuthModal from "../AuthModal";
-import { useAuth } from "../../context/useAuth"; // путь может отличаться
+import AuthModal from "../modals/AuthModal";
+import { useAuth } from "../../context/useAuth";
 
 const Header = () => {
   const location = useLocation();
@@ -183,16 +183,31 @@ const Header = () => {
                 Статьи
               </Link>
             </li>
+
+            {/* Мобильный пункт для аватара или входа */}
             <li>
-              <Link
-                to="/profile"
-                onClick={() => {
-                  handleLinkClick();
-                }}
-                className={clsx({ "font-bold": isActive("/profile") })}
-              >
-                Профиль
-              </Link>
+              {user ? (
+                <Link
+                  to="/profile"
+                  onClick={() => {
+                    handleLinkClick();
+                  }}
+                  className={clsx({ "font-bold": isActive("/profile") })}
+                >
+                  <img
+                    src={profile?.avatar_url || "../default-avatar.png"}
+                    alt="Аватар"
+                    className="h-12 w-12 rounded-full object-cover"
+                  />
+                </Link>
+              ) : (
+                <span
+                  onClick={handleLoginClick}
+                  className="cursor-pointer hover:text-gray-300"
+                >
+                  Войти
+                </span>
+              )}
             </li>
           </ul>
           <button

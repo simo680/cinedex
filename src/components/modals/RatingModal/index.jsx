@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
-import Modal from "../../components/Modal";
-import Star from "../../assets/star.svg?react";
-import ActiveStar from "../../assets/active-star.svg?react";
-import ActiveHalfStar from "../../assets/active-half-star.svg?react";
+import Modal from "../../Modal";
+import Star from "../../../assets/star.svg?react";
+import ActiveStar from "../../../assets/active-star.svg?react";
+import ActiveHalfStar from "../../../assets/active-half-star.svg?react";
 
 const RatingModal = ({ isOpen, onClose, initialRating = 0, onSubmit }) => {
-  const [userRating, setUserRating] = useState(initialRating); // Изначальная оценка
+  const [userRating, setUserRating] = useState(initialRating); 
   const [hoverRating, setHoverRating] = useState(null);
   const [averageRating, setAverageRating] = useState(initialRating);
-  const [lastClicked, setLastClicked] = useState(null); // ⭐ отслеживаем последнюю звезду
+  const [lastClicked, setLastClicked] = useState(null); 
 
   useEffect(() => {
-    setUserRating(initialRating); // Если пришла новая оценка, обновляем состояние
+    setUserRating(initialRating); 
     setAverageRating(initialRating);
   }, [initialRating]);
 
