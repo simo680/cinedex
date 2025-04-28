@@ -99,7 +99,7 @@ const ProfilePage = () => {
           </button>
           <button className="w-full cursor-pointer bg-[var(--accent)] p-3 text-sm sm:px-20 sm:text-base">
             <Link to="/add-film" className="block w-full text-center">
-              Добавить фильм
+              Добавить кино
             </Link>
           </button>
         </div>
