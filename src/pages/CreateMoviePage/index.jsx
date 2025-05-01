@@ -5,7 +5,6 @@ import { useState } from "react";
 import supabase from "../../services/supabase/supabase";
 import clsx from "clsx";
 
-
 const CreateMoviePage = () => {
   const { user } = useAuth();
   const [isMovie, setIsMovie] = useState(true);
@@ -68,7 +67,13 @@ const CreateMoviePage = () => {
     { value: "no", label: "Нет" },
   ];
 
-  const { register, handleSubmit, control, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm();
 
   const onSubmit = async (data) => {
     try {
@@ -204,7 +209,7 @@ const CreateMoviePage = () => {
           <Controller
             name="media_type"
             control={control}
-            rules={{ required: true }}
+            rules={{ required: "Пожалуйста, выберите тип" }}
             render={({ field }) => (
               <Select
                 {...field}
@@ -223,34 +228,58 @@ const CreateMoviePage = () => {
               />
             )}
           />
+          {errors.media_type && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.media_type.message}
+            </p>
+          )}
         </div>
 
         <div>
           <label className="block">Название фильма/сериала</label>
           <input
-            {...register("title", { required: true })}
+            {...register("title", {
+              required: "Пожалуйста, введите название.",
+            })}
             className={inputStyles.base}
             placeholder="Введите название"
             maxLength={100}
           />
+          {errors.title && (
+            <p className="mt-1 text-sm text-red-500">{errors.title.message}</p>
+          )}
         </div>
 
         <div>
           <label className="block">Дата выпуска</label>
           <input
             type="date"
-            {...register("releaseDate", { required: true })}
+            {...register("releaseDate", {
+              required: "Пожалуйста, укажите дату выпуска.",
+            })}
             className={inputStyles.base}
           />
+          {errors.releaseDate && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.releaseDate.message}
+            </p>
+          )}
         </div>
 
         <div>
           <label className="block">Длительность фильма (в минутах)</label>
           <input
             type="number"
-            {...register("duration", { required: true })}
+            {...register("duration", {
+              required: "Пожалуйста, укажите длительность.",
+            })}
             className={inputStyles.base}
           />
+          {errors.duration && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.duration.message}
+            </p>
+          )}
         </div>
 
         <div>
@@ -258,7 +287,7 @@ const CreateMoviePage = () => {
           <Controller
             name="ageRating"
             control={control}
-            rules={{ required: true }}
+            rules={{ required: "Пожалуйста, выберите возрастной рейтинг." }}
             render={({ field }) => (
               <Select
                 {...field}
@@ -270,6 +299,11 @@ const CreateMoviePage = () => {
               />
             )}
           />
+          {errors.ageRating && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.ageRating.message}
+            </p>
+          )}
         </div>
 
         <div>
@@ -277,7 +311,7 @@ const CreateMoviePage = () => {
           <Controller
             name="genres"
             control={control}
-            rules={{ required: true }}
+            rules={{ required: "Пожалуйста, выберите хотя бы один жанр." }}
             render={({ field }) => (
               <Select
                 {...field}
@@ -290,6 +324,9 @@ const CreateMoviePage = () => {
               />
             )}
           />
+          {errors.genres && (
+            <p className="mt-1 text-sm text-red-500">{errors.genres.message}</p>
+          )}
         </div>
 
         <div>
@@ -297,6 +334,7 @@ const CreateMoviePage = () => {
           <Controller
             name="monetization"
             control={control}
+            rules={{ required: "Пожалуйста, выберите монетизацию." }}
             render={({ field }) => (
               <Select
                 {...field}
@@ -308,26 +346,40 @@ const CreateMoviePage = () => {
               />
             )}
           />
+          {errors.monetization && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.monetization.message}
+            </p>
+          )}
         </div>
 
         <div>
           <label className="block">Описание фильма</label>
           <textarea
-            {...register("description")}
+            name="description"
+            {...register("description", { required: true })}
             className={`${inputStyles.base} resize-none`}
             rows="6"
             placeholder="Введите краткое описание фильма"
             maxLength={500}
           />
+          {errors.description && (
+            <p className="mt-1 text-sm text-red-500">
+              {errors.description.message}
+            </p>
+          )}
         </div>
 
         <div>
           <label className="block">Обложка фильма</label>
           <input
             type="file"
-            {...register("poster")}
+            {...register("poster", { required: true })}
             className={inputStyles.base}
           />
+          {errors.poster && (
+            <p className="mt-1 text-sm text-red-500">{errors.poster.message}</p>
+          )}
         </div>
 
         <button
@@ -342,3 +394,10 @@ const CreateMoviePage = () => {
 };
 
 export default CreateMoviePage;
+
+<button
+  type="submit"
+  className="w-full cursor-pointer rounded bg-red-700 py-2 outline-none hover:bg-red-800"
+>
+  Отправить
+</button>;
