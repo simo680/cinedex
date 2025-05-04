@@ -1,20 +1,5 @@
 import supabase from "./supabase";
 
-
-
-// Получение профиля пользователя
-// export const handleUsernameBlur = async (setIsEditing) => {
-//   setIsEditing(false);
-//   if (!profile) return;
-
-//   const { error } = await supabase
-//     .from("profiles")
-//     .update({ username: profile.username })
-//     .eq("id", user.id);
-
-//   if (error) console.error("Ошибка обновления имени:", error.message);
-// };
-
 // Загрузка нового аватара
 export const uploadAvatar = async (file, user, setProfile) => {
   if (!file || !user) return;
@@ -68,5 +53,3 @@ export const searchMoviesInSupabase = async (query) => {
 
   return data;
 };
-
-

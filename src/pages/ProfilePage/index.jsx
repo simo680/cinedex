@@ -33,8 +33,8 @@ const ProfilePage = () => {
     uploadAvatar(file, user, setProfile);
   };
 
-  const logout = async () => {
-    const { error } = await supabase.auth.signOut();
+  const logout = () => {
+    const { error } = supabase.auth.signOut();
     if (error) console.error("Ошибка выхода:", error.message);
   };
 

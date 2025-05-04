@@ -1,6 +1,6 @@
 import { useRef } from "react";
-import LeftArrow from "../../assets/left-button.svg?react";
-import RightArrow from "../../assets/right-button.svg?react";
+import LeftArrow from "../../../assets/left-button.svg?react";
+import RightArrow from "../../../assets/right-button.svg?react";
 
 const HorizontalScrollList = ({
   title,

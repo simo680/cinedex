@@ -209,7 +209,7 @@ const CreateMoviePage = () => {
           <Controller
             name="media_type"
             control={control}
-            rules={{ required: "Пожалуйста, выберите тип" }}
+            rules={{ required: "Пожалуйста, выберите тип." }}
             render={({ field }) => (
               <Select
                 {...field}
@@ -357,11 +357,20 @@ const CreateMoviePage = () => {
           <label className="block">Описание фильма</label>
           <textarea
             name="description"
-            {...register("description", { required: true })}
+            {...register("description", {
+              required: "Пожалуйста, введите описание",
+              minLength: {
+                value: 10,
+                message: "Описание должно содержать минимум 10 символов.",
+              },
+              maxLength: {
+                value: 500,
+                message: "Описание не должно превышать 500 символов.",
+              },
+            })}
             className={`${inputStyles.base} resize-none`}
             rows="6"
-            placeholder="Введите краткое описание фильма"
-            maxLength={500}
+            placeholder="Введите краткое описание фильма."
           />
           {errors.description && (
             <p className="mt-1 text-sm text-red-500">
@@ -371,10 +380,12 @@ const CreateMoviePage = () => {
         </div>
 
         <div>
-          <label className="block">Обложка фильма</label>
+          <label className="block">Постер фильма</label>
           <input
             type="file"
-            {...register("poster", { required: true })}
+            {...register("poster", {
+              required: "Пожалуйста, загрузите постер",
+            })}
             className={inputStyles.base}
           />
           {errors.poster && (
