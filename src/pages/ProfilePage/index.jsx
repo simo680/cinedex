@@ -48,8 +48,8 @@ const ProfilePage = () => {
 
   return (
     <>
-      <div className="flex items-center justify-between p-4">
-        <div className="group relative h-[280px] w-[280px]">
+      <div className="flex flex-col items-center gap-6 p-4 md:flex-row md:items-center md:justify-between">
+        <div className="group relative h-[200px] w-[200px] sm:h-[240px] sm:w-[240px] md:h-[280px] md:w-[280px]">
           <img
             src={profile.avatar_url || "/default-avatar.png"}
             alt="Аватар"
@@ -70,7 +70,7 @@ const ProfilePage = () => {
           />
         </div>
 
-        <div className="ml-6 flex-1">
+        <div className="w-full text-center md:flex-1 md:text-left">
           {isEditing ? (
             <input
               type="text"
@@ -78,7 +78,7 @@ const ProfilePage = () => {
               onChange={handleUsernameChange}
               onBlur={handleUsernameBlur}
               autoFocus
-              className="border-b border-gray-400 bg-transparent text-2xl font-semibold focus:border-red-500 focus:outline-none"
+              className="w-full border-b border-gray-400 bg-transparent text-2xl font-semibold focus:border-red-500 focus:outline-none"
             />
           ) : (
             <h2
@@ -90,22 +90,21 @@ const ProfilePage = () => {
           )}
         </div>
 
-        <div className="flex flex-col items-end justify-center gap-3">
+        <div className="flex w-full flex-col gap-3 sm:max-w-xs md:w-auto">
           <button
             onClick={logout}
-            className="w-full cursor-pointer bg-[var(--tertiary)] p-3 text-sm sm:px-20 sm:text-base"
+            className="w-full bg-[var(--tertiary)] p-3 text-sm sm:px-20 sm:text-base"
           >
             Выйти
           </button>
-          <button className="w-full cursor-pointer bg-[var(--accent)] p-3 text-sm sm:px-20 sm:text-base">
+          <button className="w-full bg-[var(--accent)] p-3 text-sm sm:px-20 sm:text-base">
             <Link to="/add-film" className="block w-full text-center">
               Добавить кино
             </Link>
           </button>
         </div>
       </div>
-
-      <div className="flex justify-center gap-4 p-8">
+      <div className="flex flex-col items-center gap-4 p-8 sm:flex-row sm:justify-center sm:gap-8">
         <Link to="/watchlist?status=watching">
           <img
             src="../frames/frame-watching.png"
