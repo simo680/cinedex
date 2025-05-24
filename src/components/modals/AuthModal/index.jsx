@@ -19,44 +19,6 @@ const AuthModal = ({ isOpen, onClose }) => {
   const [showAgreement, setShowAgreement] = useState(false);
   const [pendingFormData, setPendingFormData] = useState(null);
 
-  // const onSubmit = async (data) => {
-  //   try {
-  //     if (isRegister) {
-  //       const { data: signUpData, error: signUpError } =
-  //         await supabase.auth.signUp({
-  //           email: data.email,
-  //           password: data.password,
-  //         });
-
-  //       if (signUpError) throw signUpError;
-
-  //       const { error: profileError } = await supabase.from("profiles").insert([
-  //         {
-  //           id: signUpData.user.id,
-  //           username: data.username,
-  //         },
-  //       ]);
-
-  //       if (profileError) throw profileError;
-
-  //       onClose();
-  //     } else {
-  //       const { data: signInData, error: signInError } =
-  //         await supabase.auth.signInWithPassword({
-  //           email: data.email,
-  //           password: data.password,
-  //         });
-
-  //       if (signInError) throw signInError;
-
-  //       onClose();
-  //     }
-  //   } catch (error) {
-  //     alert("Ошибка: " + error.message);
-  //     console.error(error);
-  //   }
-  // };
-
   const handleAcceptAgreement = async () => {
     try {
       const data = pendingFormData;

@@ -1,10 +1,10 @@
-import { fetchDiscoverTvSeries } from "../../services/api"; // сделай эту функцию в api.js
-import DiscoverPage from "../../components/Discover";
+import { fetchDiscoverTvSeries } from "../../services/api";
+import Discover from "../../components/Discover";
 
 const SeriesPage = () => {
   return (
     <>
-      <DiscoverPage fetchData={fetchDiscoverTvSeries} routePrefix="series" />
+      <Discover fetchData={fetchDiscoverTvSeries} routePrefix="series" />
     </>
   );
 };
