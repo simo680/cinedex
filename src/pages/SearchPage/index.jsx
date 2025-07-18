@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
-import { searchByTitle } from "../../services/api";
+import { searchByTitle } from "../../services/api/api";
 import { searchMoviesInSupabase } from "../../services/supabase/supastore";
 import Loader from "../../components/ui/Loader";
 import { useLoader } from "../../context/loaderProvider";

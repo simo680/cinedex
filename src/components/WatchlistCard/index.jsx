@@ -1,4 +1,4 @@
-import { apiKey } from "../../services/api";
+import { apiKey } from "../../services/api/api";
 import { useEffect, useState } from "react";
 import supabase from "../../services/supabase/supabase";
 

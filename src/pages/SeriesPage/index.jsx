@@ -1,4 +1,4 @@
-import { fetchDiscoverTvSeries } from "../../services/api";
+import { fetchDiscoverTvSeries } from "../../services/api/api";
 import Discover from "../../components/Discover";
 
 const SeriesPage = () => {

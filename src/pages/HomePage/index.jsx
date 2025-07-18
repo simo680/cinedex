@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import HorizontalScrollList from "../../components/ui/HorizontalScrollList";
-import { fetchCategoryMovies } from "../../services/api";
+import { fetchCategoryMovies } from "../../services/api/api";
 import { useLoader } from "../../context/loaderProvider"; 
 import Loader from "../../components/ui/Loader";
 

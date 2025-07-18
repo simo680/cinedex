@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchDetails, fetchCredits, fetchImages } from "../../services/api";
+import { fetchDetails, fetchCredits, fetchImages } from "../../services/api/api";
 import HorizontalScrollList from "../../components/ui/HorizontalScrollList";
 import DonateModal from "../../components/modals/DonateModal";
 import ClockIcon from "../../assets/clock.svg?react";

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
-import CloseIcon from "../../assets/close.svg?react";
+// import CloseIcon from "../../../assets/close.svg?react";
 
 const Modal = ({ isOpen, onClose, children }) => {
   useEffect(() => {
@@ -27,7 +27,7 @@ const Modal = ({ isOpen, onClose, children }) => {
           onClick={onClose}
           aria-label="Закрыть модалку"
         >
-          <CloseIcon className="h-6 w-6" />
+          {/* <CloseIcon className="h-6 w-6" /> */}
         </button>
         {children}
       </div>

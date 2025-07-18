@@ -1,17 +1,17 @@
-import { useState, useEffect } from "react";
-import Modal from "../../Modal";
-import Star from "../../../assets/star.svg?react";
-import ActiveStar from "../../../assets/active-star.svg?react";
+import { useEffect, useState } from "react";
 import ActiveHalfStar from "../../../assets/active-half-star.svg?react";
+import ActiveStar from "../../../assets/active-star.svg?react";
+import Star from "../../../assets/star.svg?react";
+import Modal from "../Modal";
 
 const RatingModal = ({ isOpen, onClose, initialRating = 0, onSubmit }) => {
-  const [userRating, setUserRating] = useState(initialRating); 
+  const [userRating, setUserRating] = useState(initialRating);
   const [hoverRating, setHoverRating] = useState(null);
   const [averageRating, setAverageRating] = useState(initialRating);
-  const [lastClicked, setLastClicked] = useState(null); 
+  const [lastClicked, setLastClicked] = useState(null);
 
   useEffect(() => {
-    setUserRating(initialRating); 
+    setUserRating(initialRating);
     setAverageRating(initialRating);
   }, [initialRating]);
 
@@ -21,10 +21,8 @@ const RatingModal = ({ isOpen, onClose, initialRating = 0, onSubmit }) => {
     let newRating = averageRating;
 
     if (lastClicked === clickedRating) {
-      // Повторный клик по той же звезде — целое число
       newRating = clickedRating;
     } else {
-      // Первый клик по звезде — .5
       newRating = clickedRating - 0.5;
     }
 

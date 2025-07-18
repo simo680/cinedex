@@ -1,9 +1,9 @@
+import clsx from "clsx";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import clsx from "clsx";
-import Modal from "../../Modal";
-import OpenEyeIcon from "../../../assets/open-eye.svg?react";
 import CloseEyeIcon from "../../../assets/close-eye.svg?react";
+import OpenEyeIcon from "../../../assets/open-eye.svg?react";
+import Modal from "../Modal";
 import supabase from "../../../services/supabase/supabase";
 import AgreementModal from "../AgreementModal";
 
